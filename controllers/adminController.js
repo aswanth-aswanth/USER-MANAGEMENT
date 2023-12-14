@@ -1,5 +1,6 @@
 const { ObjectId } = require('mongodb');
 const {getDb}=require('../models/db');
+const bcrypt=require('bcrypt');
 
 const connectDb=()=>{
     const db=getDb();
@@ -54,6 +55,44 @@ const login=async(req,res)=>{
     }
 }
 
+const createUserGet=async(req,res)=>{
+    try {
+        res.render('admin/create-user');
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+const createUser=async(req,res)=>{
+    try {
+        console.log("signup executed");
+        const {username,password,email}=req.body;
+        console.log(req.body);
+        let {usersCollection}=connectDb();
+        const existingUser=await usersCollection.findOne({
+          email
+        })
+        console.log("existing user : ",existingUser);
+        if(existingUser){
+          return res.status(400).json({error:"email already exists"});
+        }
+        const hashedPassword=bcrypt.hashSync(password,10);
+        const newUser={
+          username,
+          password:hashedPassword,
+          email
+        }
+        const result=await usersCollection.insertOne(newUser);
+        console.log(result);
+        // req.session.userId=result.insertedId;
+        res.redirect("/admin");
+        // res.json({message:"Signup successfull",data:result});
+      } catch (error) {
+        console.error('Error during signup:', error);
+        res.status(500).json({ error: 'Internal Server Error' });
+      }
+}
+
 const deleteUser=async(req,res)=>{
     try {
          const userId=req.params.id;
@@ -106,23 +145,6 @@ const editSubmit=async(req,res)=>{
     }
 }
 
-const createUser=async(req,res)=>{
-    try {
-        res.render('admin/signup');
-    } catch (error) {
-        console.log(error);
-    }
-}
 
-const createSubmit=async(req,res)=>{
-    try {
-        const {usersCollection}=connectDb();
-        const {username,email,password}=req.body;
-        const user=usersCollection.insertOne({});
-        const successMessage="User created successfully";
-        res.redirect("/admin")
-    } catch (error) {
-        console.log(error);
-    }
-}
-module.exports={login,home,deleteUser,updateUser,editUser,editSubmit,createUser}
+
+module.exports={login,home,deleteUser,updateUser,editUser,editSubmit,createUser,createUserGet}

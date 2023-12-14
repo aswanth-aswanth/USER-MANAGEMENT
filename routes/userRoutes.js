@@ -23,6 +23,8 @@ const verifyUser = (req, res, next) => {
   router.get('/login', userController.loginGet);
   // User Signup (POST request)
   router.post('/signup', userController.signup);
+  //User signup (GET request)
+  router.get('/signup',userController.signupGet);
   // Home Page for Users (requires authentication)
   // Logout (GET request)
 router.get('/logout', userController.logout); 

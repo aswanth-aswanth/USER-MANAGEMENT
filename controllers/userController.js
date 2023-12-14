@@ -18,7 +18,7 @@ const login = async (req, res) => {
         // usersCollection=db.collection('users' );
         console.log("login");
         const user = await usersCollection.findOne({ email });
-
+ 
         if (user && bcrypt.compareSync(password, user.password)) {
           req.session.userId = user._id;
           res.redirect('/'); 
@@ -43,10 +43,12 @@ const login = async (req, res) => {
     try {
       console.log("signup executed");
       const {username,password,email}=req.body;
-      usersCollection=connectDb();
+      console.log(req.body);
+      let usersCollection=connectDb();
       const existingUser=await usersCollection.findOne({
-        email:email
+        email
       })
+      console.log("existing user : ",existingUser);
       if(existingUser){
         return res.status(400).json({error:"email already exists"});
       }
@@ -57,13 +59,24 @@ const login = async (req, res) => {
         email
       }
       const result=await usersCollection.insertOne(newUser);
-      req.session.userId=result.insertedId;
-      res.json({message:"Signup successfull",data:result});
+      // req.session.userId=result.insertedId;
+      res.redirect("/");
+      // res.json({message:"Signup successfull",data:result});
     } catch (error) {
       console.error('Error during signup:', error);
       res.status(500).json({ error: 'Internal Server Error' });
     }
   };
+
+  //User signup for get
+  const signupGet=async(req,res)=>{
+    try {
+      console.log("Sign up get");
+      res.render("user/signup");
+    } catch (error) {
+      console.log(error);
+    }
+  }
   
   // Home Page for Users
   const home = (req, res) => {
@@ -92,5 +105,6 @@ const login = async (req, res) => {
     signup,
     home,
     logout,
-    loginGet
+    loginGet,
+    signupGet
   };

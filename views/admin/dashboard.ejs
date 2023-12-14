@@ -1,10 +1,12 @@
 <div class="h-75 d-flex justify-content-center   bg-body-secondary align-items-center">
-  <div class="position-relative w-100 d-flex justify-content-center">
-    <div class="position-absolute z-1  " style="top: -50px;;">
-      <input type="text" placeholder="search">
-      <button>create User</button>
+  <div class=" w-100 d-flex justify-content-center" style="margin-top: 50px;">
+    <div class="position-absolute z-1  " style="top: 110px;;">
+      <input class="rounded-2 py-2 ps-2 " id="searchInput" oninput="searchUsers()" type="text" placeholder="search" >
+      <a href="/admin/createuser">
+        <button class="rounded-2 py-2 " >create User</button>
+      </a>
     </div>
-    <table class="table table-bordered w-75 mx-auto table-hover position-relative">
+    <table class="table table-bordered shadow-lg  w-75 mx-auto table-hover position-absolute " style="top: 160px;" >
       <thead class="table-dark">
       <th>User name</th>
       <th>Email</th>
@@ -18,13 +20,10 @@
       <td>
         <p class="mt-4"><%= data.email %></p>
       </td>
-      <td style="width: 20%">
-        <!-- <a href="/admin/updateuser/<%= data._id %>" class=""> -->
+      <td style="width: 20%" class="text-center ">
         <a href="/admin/editUser/<%= data._id %>">
           <button class="btn btn-warning">edit</button>
         </a>
-        <!-- </a> -->
-        <!-- <a href="/admin/deleteuser/<%= data._id %>" onclick="return confirm('Are you want to delete <%=data.Name%> ?')" class="danger"> -->
           <a href="/admin/deleteUser/<%= data._id %>" onclick="return confirm('Are you want to delete <%= data.username %> ?')">
             <button class="btn btn-danger">delete</button>
           </a>
@@ -41,3 +40,26 @@
   </table>
 </div>
 </div>
+
+<script>
+  function searchUsers() {
+    console.log("executed");
+    var input, filter, table, tr, td, i, txtValue;
+    input = document.getElementById("searchInput");
+    filter = input.value.toUpperCase();
+    table = document.querySelector(".table");
+    tr = table.getElementsByTagName("tr");
+
+    for (i = 0; i < tr.length; i++) {
+      td = tr[i].getElementsByTagName("td")[0]; // Change index to the column you want to search
+      if (td) {
+        txtValue = td.textContent || td.innerText;
+        if (txtValue.toUpperCase().indexOf(filter) > -1) {
+          tr[i].style.display = "";
+        } else {
+          tr[i].style.display = "none";
+        }
+      }
+    }
+  }
+</script>

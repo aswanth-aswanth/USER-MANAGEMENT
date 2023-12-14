@@ -17,6 +17,8 @@ const verify=(req,res,next)=>{
 router.get('/',verify,adminController.home);
 router.get('/login',adminController.login);
 router.post('/login',adminController.login);
+router.get('/createuser',adminController.createUserGet);
+router.post('/createuser',adminController.createUser);
 router.get('/deleteUser/:id',adminController.deleteUser);
 // router.put('/updateUser/:id',adminController.updateUser);
 router.get('/editUser/:id',adminController.editUser);
