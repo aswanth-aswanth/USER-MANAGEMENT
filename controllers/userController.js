@@ -30,6 +30,9 @@ const login = async (req, res) => {
         res.status(500).json({ error: 'Internal Server Error' });
       }
   };
+
+
+  
   //User login for get request
   const loginGet=(req,res)=>{
     if(!req.session.userId){
@@ -80,25 +83,19 @@ const login = async (req, res) => {
   
   // Home Page for Users
   const home = (req, res) => {
-    // console.log("home")
-    // if(req.session.user){
       console.log("Home session");
       res.render('user/home');
-    // }else{
-      // res.render('user/login');
-    // }
   };
   
   //User logout
   const logout=(req,res)=>{
-    req.session.destroy((err) => {
-      if (err) {
-        console.error('Error during logout:', err);
-        res.status(500).json({ error: 'Internal Server Error' });
-      } else {
-        res.redirect('/')
-      }
-    });
+    try {
+      req.session.userId=null;
+      res.redirect('/');
+
+    } catch (error) {
+      console.log(error);
+    }
   }
   module.exports = {
     login,

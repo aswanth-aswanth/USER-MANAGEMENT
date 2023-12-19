@@ -37,18 +37,15 @@ const login=async(req,res)=>{
         const {adminCollection}=connectDb();
         const {email,password}=req.body;
         const Admin=await adminCollection.findOne({email});
-        console.log("Admin");
-        console.log(Admin);
-        console.log(email,password);
         if(Admin){
             if(Admin.password==password){
                 req.session.admin=Admin.email;
                 res.redirect("/admin");
             }else{
-                res.redirect("/login");
+                res.redirect("/admin");
             }
         }else{
-            res.redirect("/login")
+            res.redirect("/admin")
         }
     } catch (error) {
         console.log(error);
@@ -65,14 +62,12 @@ const createUserGet=async(req,res)=>{
 
 const createUser=async(req,res)=>{
     try {
-        console.log("signup executed");
         const {username,password,email}=req.body;
         console.log(req.body);
         let {usersCollection}=connectDb();
         const existingUser=await usersCollection.findOne({
           email
         })
-        console.log("existing user : ",existingUser);
         if(existingUser){
           return res.status(400).json({error:"email already exists"});
         }
@@ -145,6 +140,13 @@ const editSubmit=async(req,res)=>{
     }
 }
 
+const logout=async(req,res)=>{
+    try {
+        req.session.admin=null;
+        res.redirect('/admin');
+    } catch (error) {
+        console.log(error);
+    }
+}
 
-
-module.exports={login,home,deleteUser,updateUser,editUser,editSubmit,createUser,createUserGet}
+module.exports={login,logout,home,deleteUser,updateUser,editUser,editSubmit,createUser,createUserGet}
